@@ -1,10 +1,17 @@
-//your variable declarations here
+Spaceship ss = new Spaceship(256, 256);
+
 public void setup() 
 {
-  //your code here
-}
-public void draw() 
-{
-  //your code here
+  size(512, 512);
+  ss.setSpeed(10);
+  ss.setSpeedRotation(75);
 }
 
+
+public void draw() 
+{
+  background(color(64));
+  ss.setRotation(ss.getRotation() + 1);
+  ss.tick();
+  ss.draw();
+}
