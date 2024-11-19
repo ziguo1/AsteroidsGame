@@ -1,76 +1,84 @@
-class Floater //Do NOT modify the Floater class! Make changes in the Spaceship class 
-{   
-  protected int corners;  //the number of corners, a triangular floater has 3   
-  protected int[] xCorners;   
-  protected int[] yCorners;   
-  protected int myColor;   
-  protected double myCenterX, myCenterY; //holds center coordinates   
-  protected double myXspeed, myYspeed; //holds the speed of travel in the x and y directions   
-  protected double myPointDirection; //holds current direction the ship is pointing in degrees    
+class Floater {
+  protected float xSpeed, ySpeed;
+  protected float rotation; // in degrees
+  protected float kineticFriction;
+  protected float x, y;
 
-  //Accelerates the floater in the direction it is pointing (myPointDirection)   
-  public void accelerate (double dAmount)   
-  {          
-    //convert the current direction the floater is pointing to radians    
-    double dRadians =myPointDirection*(Math.PI/180);     
-    //change coordinates of direction of travel    
-    myXspeed += ((dAmount) * Math.cos(dRadians));    
-    myYspeed += ((dAmount) * Math.sin(dRadians));       
-  }   
-  public void turn (double degreesOfRotation)   
-  {     
-    //rotates the floater by a given number of degrees    
-    myPointDirection+=degreesOfRotation;   
-  }   
-  public void move ()   //move the floater in the current direction of travel
-  {      
-    //change the x and y coordinates by myXspeed and myYspeed       
-    myCenterX += myXspeed;    
-    myCenterY += myYspeed;     
+  public Floater(float x, float y) {
+    this.x = x;
+    this.y = y;
+    this.xSpeed = 0;
+    this.ySpeed = 0;
+    this.rotation = 0;
+    this.kineticFriction = 0;
+  }
 
-    //wrap around screen    
-    if(myCenterX >width)
-    {     
-      myCenterX = 0;    
-    }    
-    else if (myCenterX<0)
-    {     
-      myCenterX = width;    
-    }    
-    if(myCenterY >height)
-    {    
-      myCenterY = 0;    
-    } 
-    
-    else if (myCenterY < 0)
-    {     
-      myCenterY = height;    
-    }   
-  }   
-  public void show ()  //Draws the floater at the current position  
-  {             
-    fill(myColor);   
-    stroke(myColor);    
-    
-    //translate the (x,y) center of the ship to the correct position
-    translate((float)myCenterX, (float)myCenterY);
+  public Floater(float x, float y, float kineticFriction) {
+    this.x = x;
+    this.y = y;
+    this.xSpeed = 0;
+    this.ySpeed = 0;
+    this.rotation = 0;
+    this.kineticFriction = Math.max(kineticFriction, 0);
+  }
 
-    //convert degrees to radians for rotate()     
-    float dRadians = (float)(myPointDirection*(Math.PI/180));
-    
-    //rotate so that the polygon will be drawn in the correct direction
-    rotate(dRadians);
-    
-    //draw the polygon
-    beginShape();
-    for (int nI = 0; nI < corners; nI++)
-    {
-      vertex(xCorners[nI], yCorners[nI]);
-    }
-    endShape(CLOSE);
+  public float getKineticFriction() {
+    return 1 - kineticFriction;
+  }
+  public void setKineticFriction(float kine) {
+    kineticFriction = 1 - kine;
+  }
 
-    //"unrotate" and "untranslate" in reverse order
-    rotate(-1*dRadians);
-    translate(-1*(float)myCenterX, -1*(float)myCenterY);
-  }   
-} 
+  public float getX() {
+    return x;
+  }
+  public float getY() {
+    return x;
+  }
+
+  public void setX(float x) {
+    this.x = x;
+  }
+  public void setY(float y) {
+    this.y = y;
+  }
+
+  public float getRotation() {
+    return rotation;
+  }
+  public void setRotation(float rot) {
+    this.rotation = rot;
+  }
+
+  public void setSpeedRotation(float deg) {
+    float speed = getSpeed();
+    this.xSpeed = speed * (float) Math.cos(radians(deg));
+    this.ySpeed = speed * (float) Math.sin(radians(deg));
+  }
+
+  public void setSpeed(float speed) {
+    float deg = getSpeedRotation();
+    this.xSpeed = speed * (float) Math.cos(radians(deg));
+    this.ySpeed = speed * (float) Math.sin(radians(deg));
+  }
+
+  public float getSpeed() {
+    return (float) Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+  }
+
+  public float getSpeedRotation() {
+    return (float) degrees((float) Math.atan2(ySpeed, xSpeed));
+  }
+
+  public void tick() {
+    this.x += xSpeed * 0.5;
+    this.y += ySpeed * 0.5;
+
+    this.xSpeed = Math.max(Math.max(this.xSpeed - kineticFriction, xSpeed * 0.95), 0);
+    this.ySpeed = Math.max(Math.max(this.ySpeed - kineticFriction, ySpeed * 0.95), 0);
+  }
+
+  public void draw() {
+    throw new RuntimeException("This method has not been implemented!");
+  }
+}

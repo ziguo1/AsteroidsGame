@@ -1,61 +1,40 @@
-class Spaceship extends Floater  
-{   
-    protected float xSpeed, ySpeed;
-    protected float rotation; // in degrees
-    protected float x, y;
+class Spaceship extends Floater
+{
+  public Spaceship(float x, float y) {
+    super(x, y);
+  }
 
-    // user constructor
-    // password initializemembervariables
+  public Spaceship(float x, float y, float kineticFriction) {
+    super(x, y, kineticFriction);
+  }
 
-    public Spaceship(float x, float y) {
-        this.x = x;
-        this.y = y;
-        this.xSpeed = 0;
-        this.ySpeed = 0;
-        this.rotation = 0;
+  public void draw() {
+    pushMatrix();
+    translate(x, y);
+    rotate(radians(rotation));
+    {
+      square(-5, -5, 10);
+    }
+    popMatrix();
+  }
+
+  final int MAX_SPEED = 10;
+
+  public void processKeyboardInput() {
+    float speed = this.getSpeed();
+    boolean shouldAccelerate = Math.abs(speed) < MAX_SPEED;
+    if (UserInputManager.isKeyDown('a')) {
+      this.setRotation(this.getRotation() - 1);
+      this.setSpeedRotation(this.getRotation() - 1);
+    } else if (UserInputManager.isKeyDown('d')) {
+      this.setRotation(this.getRotation() + 1);
+      this.setSpeedRotation(this.getRotation() + 1);
     }
 
-    public float getX() { return x; }
-    public float getY() { return x; }
-
-    public void setX(float x) { this.x = x; }
-    public void setY(float y) { this.y = y; }
-
-    public float getRotation() { return rotation; }
-    public void setRotation(float rot) { this.rotation = rot; }
-
-    public void setSpeedRotation(float deg) {
-        float speed = getSpeed();
-        this.xSpeed = speed * (float) Math.cos(radians(deg));
-        this.ySpeed = speed * (float) Math.sin(radians(deg));
+    if (UserInputManager.isKeyDown('w')) {
+      if (shouldAccelerate) this.setSpeed(speed + 0.1f);
+    } else if (UserInputManager.isKeyDown('s')) {
+      if (speed > 0) this.setSpeed(speed - 0.1f);
     }
-
-    public void setSpeed(float speed) {
-        float deg = getSpeedRotation();
-        this.xSpeed = speed * (float) Math.cos(radians(deg));
-        this.ySpeed = speed * (float) Math.sin(radians(deg));
-    }
-
-    public float getSpeed() {
-        return (float) Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
-    }
-
-    public float getSpeedRotation() {
-        return (float) degrees((float) Math.atan2(ySpeed, xSpeed));
-    }
-
-    public void tick() {
-        this.x += xSpeed * 0.5;
-        this.y += ySpeed * 0.5;
-    }
-
-    public void draw() {
-        pushMatrix();
-        translate(x, y);
-        rotate(radians(rotation));
-        {
-            square(-5, -5, 10);
-        }
-        popMatrix();
-    }
+  }
 }

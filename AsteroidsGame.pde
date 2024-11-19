@@ -1,17 +1,26 @@
-Spaceship ss = new Spaceship(256, 256);
+class SceneManager {
+  private Scene activeScene;
 
-public void setup() 
+  public Scene getScene() {
+    return this.activeScene;
+  }
+  public void setScene(Scene s) {
+    this.activeScene = s;
+    s.setup();
+  }
+}
+
+SceneManager man = new SceneManager();
+
+public void setup()
 {
   size(512, 512);
-  ss.setSpeed(10);
-  ss.setSpeedRotation(75);
+  man.setScene(new DefaultScene());
 }
 
 
-public void draw() 
+public void draw()
 {
-  background(color(64));
-  ss.setRotation(ss.getRotation() + 1);
-  ss.tick();
-  ss.draw();
+  Scene s = man.getScene();
+  s.draw();
 }
