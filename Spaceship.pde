@@ -87,7 +87,7 @@ class Spaceship extends Floater
 
     if (UserInputManager.isKeyDown('e') && System.currentTimeMillis() > tillNextWarp) {
       // warp!
-      tillNextWarp = System.currentTimeMillis() + 5000;
+      tillNextWarp = System.currentTimeMillis() + 1000;
       float rotation = (float) (Math.random() * 360);
       this.setX((float) (Math.random() * width));
       this.setY((float) (Math.random() * height));
@@ -96,7 +96,7 @@ class Spaceship extends Floater
       this.setSpeed(0);
       this.setSpeedRotation(rotation);
 
-      WarpEffectShader warp = new WarpEffectShader(color(255), 1000);
+      WarpEffectShader warp = new WarpEffectShader(color(32, 64, 256), 1000);
       shaderHook.addShader(warp);
       DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
     }

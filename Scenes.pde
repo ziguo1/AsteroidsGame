@@ -1,31 +1,50 @@
-class DefaultScene implements Scene {
-  color framebufferColor;
-  Shaders shader;
-  Spaceship ss;
+abstract class BaseBattleScene implements Scene {
+  protected color framebufferColor;
+  protected Shaders postShader;
+  protected Shaders preShader;
 
-  DefaultScene() {
+  public BaseBattleScene() {
     this.framebufferColor = color(64);
-    this.shader = new Shaders();
-    this.ss = new Spaceship(height / 2, width / 2, 0.02, shader);
+    this.postShader = new Shaders();
+    this.preShader = new Shaders();
 
-    shader.addShader(new MotionBlurShader(framebufferColor, 0.3));
+    preShader.addShader(new MotionBlurShader(framebufferColor, 0.3));
+    preShader.addShader(new VibranceShader(0.3));
   }
 
   void setup() {
-    background(color(64));
+    background(framebufferColor);
   }
 
-  void draw() {
-    long begin = System.currentTimeMillis();
-    loadPixels();
-    pixels = shader.process(pixels);
-    updatePixels();
-    float elapsedShader = System.currentTimeMillis() - begin;
+  protected abstract void drawPrimatives();
 
+  long begin = System.currentTimeMillis();
+  void draw() {
+    loadPixels();
+    pixels = preShader.process(pixels);
+    updatePixels();
+    drawPrimatives();
+
+    loadPixels();
+    pixels = postShader.process(pixels);
+    updatePixels();
+
+    getSurface().setTitle(String.format("Asteroids ::= %.2f ms/frame; %.2f fps", (double) (System.currentTimeMillis() - begin), 1000.0 / (System.currentTimeMillis() - begin)));
+    begin = System.currentTimeMillis();
+  }
+}
+
+class DefaultScene extends BaseBattleScene implements Scene {
+  private Spaceship ss;
+
+  public DefaultScene() {
+    super();
+    this.ss = new Spaceship(height / 2, width / 2, 0.02, postShader);
+  }
+
+  protected void drawPrimatives() {
     ss.processKeyboardInput();
     ss.tick();
     ss.draw();
-    float elapsedFinal = System.currentTimeMillis() - begin;
-    getSurface().setTitle(String.format("Asteroids ::= %.2fms (shader) | %.2fms (final)", elapsedShader, elapsedFinal));
   }
 }

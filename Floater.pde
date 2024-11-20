@@ -71,11 +71,9 @@ class Floater {
   }
 
   public void tick() {
-    // Update position based on speed
     this.x += xSpeed;
     this.y += ySpeed;
 
-    // Apply friction to speed
     xSpeed *= (1 - kineticFriction);
     ySpeed *= (1 - kineticFriction);
   }

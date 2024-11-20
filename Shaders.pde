@@ -12,24 +12,37 @@ class MotionBlurShader implements Shader {
     for (int i = 0; i < fb.length; i++) {
       color curr = fb[i];
 
-      float r1 = red(curr);
-      float g1 = green(curr);
-      float b1 = blue(curr);
-      float a1 = alpha(curr);
+      float rDiff = abs(red(curr) - red(bg));
+      float gDiff = abs(green(curr) - green(bg));
+      float bDiff = abs(blue(curr) - blue(bg));
+      float avgDiff = (rDiff + gDiff + bDiff) / (255.0 * 3);
 
-      float r2 = red(bg);
-      float g2 = green(bg);
-      float b2 = blue(bg);
-      float a2 = alpha(bg);
+      fb[i] = (avgDiff < SNAP_TOL) ? bg : lerpColor(curr, bg, intensity);
+    }
+    return fb;
+  }
+}
 
-      float colorDiff = abs(r1-r2) + abs(g1-g2) + abs(b1-b2) + abs(a1-a2);
-      colorDiff /= (255 * 4);
+class VibranceShader implements Shader {
+  protected float intensity;
 
-      if (colorDiff < SNAP_TOL) {
-        fb[i] = bg;
-      } else {
-        fb[i] = lerpColor(curr, bg, intensity);
-      }
+  public VibranceShader(float intensity) {
+    this.intensity = constrain(intensity, 0, 1);
+  }
+
+  public color[] processFramebuffer(color[] fb) {
+    for (int i = 0; i < fb.length; i++) {
+      color curr = fb[i];
+      float r = red(curr);
+      float g = green(curr);
+      float b = blue(curr);
+
+      float avg = (r + g + b) / 3;
+      float rDiff = r - avg;
+      float gDiff = g - avg;
+      float bDiff = b - avg;
+
+      fb[i] = color(r + rDiff * intensity, g + gDiff * intensity, b + bDiff * intensity);
     }
     return fb;
   }
@@ -46,7 +59,7 @@ class WarpEffectShader extends MotionBlurShader implements Shader {
   }
 
   public color[] processFramebuffer(color[] fb) {
-    this.intensity = 1 - (float) (System.currentTimeMillis() - this.start) / (float) (this.end - this.start);
+    this.intensity = 1 - Math.min((float) (System.currentTimeMillis() - this.start) / (float) (this.end - this.start), 1);
     return super.processFramebuffer(fb);
   }
 }
