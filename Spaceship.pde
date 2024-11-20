@@ -1,4 +1,4 @@
-class Spaceship extends Floater
+public class Spaceship extends Floater
 {
   protected Shaders shaderHook;
 
@@ -12,8 +12,7 @@ class Spaceship extends Floater
     this.shaderHook = sh;
   }
 
-  @Override
-    public void tick() {
+  public void tick() {
     super.tick();
 
     if (x > width) x = 0;
@@ -28,21 +27,34 @@ class Spaceship extends Floater
     translate(x, y);
     rotate(radians(rotation));
     {
-      square(-5, -5, 10);
+      color s = g.strokeColor;
+      noStroke();
+      triangle(
+        0, 10,
+        0, -1,
+        10, -1
+        );
+      triangle(
+        0, -10,
+        0, 1,
+        10, 1
+        );
+      stroke(s);
     }
     popMatrix();
   }
 
-  final int MAX_SPEED = 10;
-  final float SPEED_INCREMENT = 0.3f;
+  protected final int MAX_SPEED = 10;
+  protected final float SPEED_INCREMENT = 0.1f;
+  protected final float SLOW_DECREMENT = -0.05f;
 
-  final double MAX_ROTATION_MOD = 5;
-  final int ROTATION_INCREMENT = 2;
-  final double ROTATION_INCREMENT_POW = 0.002;
+  protected final double MAX_ROTATION_MOD = 5;
+  protected final int ROTATION_INCREMENT = 2;
+  protected final double ROTATION_INCREMENT_POW = 0.002;
 
-  long lastHold = -1;
-  long tillNextWarp = System.currentTimeMillis();
-  char direction = 'n';
+  protected long lastHold = -1;
+  protected long tillNextWarp = System.currentTimeMillis();
+  protected char direction = 'n';
 
   public void processKeyboardInput() {
     float speed = this.getSpeed();
@@ -82,11 +94,10 @@ class Spaceship extends Floater
       if (shouldAccelerate) this.setSpeed(speed + SPEED_INCREMENT);
     }
     if (UserInputManager.isKeyDown('s')) {
-      if (speed > 0 || speed > -MAX_SPEED) this.setSpeed(speed - SPEED_INCREMENT);
+      if (speed > 0 || speed > -MAX_SPEED) this.setSpeed(speed + SLOW_DECREMENT);
     }
 
     if (UserInputManager.isKeyDown('e') && System.currentTimeMillis() > tillNextWarp) {
-      // warp!
       tillNextWarp = System.currentTimeMillis() + 1000;
       float rotation = (float) (Math.random() * 360);
       this.setX((float) (Math.random() * width));

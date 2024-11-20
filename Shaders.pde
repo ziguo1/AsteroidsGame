@@ -1,4 +1,4 @@
-class MotionBlurShader implements Shader {
+public class MotionBlurShader implements Shader {
   protected color bg;
   protected float intensity;
   protected final float SNAP_TOL = 0.1;
@@ -23,7 +23,7 @@ class MotionBlurShader implements Shader {
   }
 }
 
-class VibranceShader implements Shader {
+public class VibranceShader implements Shader {
   protected float intensity;
 
   public VibranceShader(float intensity) {
@@ -48,7 +48,7 @@ class VibranceShader implements Shader {
   }
 }
 
-class WarpEffectShader extends MotionBlurShader implements Shader {
+public class WarpEffectShader extends MotionBlurShader implements Shader {
   private long start;
   private long end;
 

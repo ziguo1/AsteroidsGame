@@ -4,7 +4,7 @@ import java.util.*;
 // located in this file. We store helper classes
 // here to assist with game development.
 
-class SceneManager {
+public class SceneManager {
   private Scene activeScene;
 
   public Scene getScene() {
@@ -65,12 +65,12 @@ public static class DeferredTaskRunner {
   }
 }
 
-interface Scene {
+public interface Scene {
   void setup();
   void draw();
 }
 
-class Shaders {
+public class Shaders {
   private ArrayList<Shader> pipeline;
   private ArrayList<Shader> basePipeline;
 
@@ -112,6 +112,6 @@ class Shaders {
   }
 }
 
-interface Shader {
+public interface Shader {
   color[] processFramebuffer(color[] fb);
 }

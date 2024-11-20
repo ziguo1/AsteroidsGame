@@ -1,3 +1,4 @@
+
 SceneManager man = new SceneManager();
 
 public void setup()
@@ -15,10 +16,10 @@ public void draw()
   s.draw();
 }
 
-void keyPressed() {
+public void keyPressed() {
   UserInputManager.keyDown(key);
 }
 
-void keyReleased() {
+public void keyReleased() {
   UserInputManager.keyUp(key);
 }

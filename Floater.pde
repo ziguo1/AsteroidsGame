@@ -1,4 +1,4 @@
-class Floater {
+public class Floater {
   protected float xSpeed, ySpeed;
   protected float rotation; // in degrees
   protected float kineticFriction;
