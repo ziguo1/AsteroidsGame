@@ -31,23 +31,35 @@ interface Shader {
 class MotionBlurShader implements Shader {
   color bg;
   float intensity;
-  final int SNAP_TOL = 5;
+  final float SNAP_TOL = 0.1;
 
   public MotionBlurShader(color bg, float intensity) {
     this.bg = bg;
-    this.intensity = 1 - intensity;
+    this.intensity = constrain(1 - intensity, 0, 1);
   }
 
   public color[] processFramebuffer(color[] fb) {
     for (int i = 0; i < fb.length; i++) {
-      final color calculatedColor = lerpColor(fb[i], this.bg, this.intensity);
-      if (
-        Math.abs((calculatedColor & 255) - (bg & 255)) <= SNAP_TOL
-        || Math.abs(((calculatedColor >> 8) & 255) - ((bg >> 8) & 255)) <= SNAP_TOL
-        || Math.abs(((calculatedColor >> 16) & 255) - ((bg >> 16) & 255)) <= SNAP_TOL
-        || Math.abs(((calculatedColor >> 24) & 255) - ((bg >> 24) & 255)) <= SNAP_TOL
-        ) fb[i] = bg;
-      else fb[i] = calculatedColor;
+      color curr = fb[i];
+
+      float r1 = red(curr);
+      float g1 = green(curr);
+      float b1 = blue(curr);
+      float a1 = alpha(curr);
+
+      float r2 = red(bg);
+      float g2 = green(bg);
+      float b2 = blue(bg);
+      float a2 = alpha(bg);
+
+      float colorDiff = abs(r1-r2) + abs(g1-g2) + abs(b1-b2) + abs(a1-a2);
+      colorDiff /= (255 * 4);
+
+      if (colorDiff < SNAP_TOL) {
+        fb[i] = bg;
+      } else {
+        fb[i] = lerpColor(curr, bg, intensity);
+      }
     }
     return fb;
   }

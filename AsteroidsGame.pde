@@ -14,6 +14,7 @@ SceneManager man = new SceneManager();
 
 public void setup()
 {
+  frameRate(60);
   size(512, 512);
   man.setScene(new DefaultScene());
 }

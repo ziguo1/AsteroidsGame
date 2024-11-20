@@ -71,11 +71,13 @@ class Floater {
   }
 
   public void tick() {
-    this.x += xSpeed * 0.5;
-    this.y += ySpeed * 0.5;
+    // Update position based on speed
+    this.x += xSpeed;
+    this.y += ySpeed;
 
-    this.xSpeed = Math.max(Math.max(this.xSpeed - kineticFriction, xSpeed * 0.95), 0);
-    this.ySpeed = Math.max(Math.max(this.ySpeed - kineticFriction, ySpeed * 0.95), 0);
+    // Apply friction to speed
+    xSpeed *= (1 - kineticFriction);
+    ySpeed *= (1 - kineticFriction);
   }
 
   public void draw() {

@@ -8,6 +8,17 @@ class Spaceship extends Floater
     super(x, y, kineticFriction);
   }
 
+  @Override
+    public void tick() {
+    super.tick();
+
+    if (x > width) x = 0;
+    else if (x < 0) x = width;
+
+    if (y > height) y = 0;
+    else if (y < 0) y = height;
+  }
+
   public void draw() {
     pushMatrix();
     translate(x, y);
@@ -19,22 +30,54 @@ class Spaceship extends Floater
   }
 
   final int MAX_SPEED = 10;
+  final float SPEED_INCREMENT = 0.3f;
+
+  final double MAX_ROTATION_MOD = 5;
+  final int ROTATION_INCREMENT = 2;
+  final double ROTATION_INCREMENT_POW = 0.002;
+
+  long lastHold = -1;
+  char direction = 'n';
 
   public void processKeyboardInput() {
     float speed = this.getSpeed();
     boolean shouldAccelerate = Math.abs(speed) < MAX_SPEED;
+
+    boolean turned = false;
     if (UserInputManager.isKeyDown('a')) {
-      this.setRotation(this.getRotation() - 1);
-      this.setSpeedRotation(this.getRotation() - 1);
-    } else if (UserInputManager.isKeyDown('d')) {
-      this.setRotation(this.getRotation() + 1);
-      this.setSpeedRotation(this.getRotation() + 1);
+      if (lastHold == -1 || direction != 'a') {
+        lastHold = System.currentTimeMillis();
+      }
+      direction = 'a';
+      turned = true;
+
+      float timeFactor = (float) Math.min(Math.pow((System.currentTimeMillis() - lastHold) * 0.001, ROTATION_INCREMENT_POW), MAX_ROTATION_MOD);
+      float rotationAmount = ROTATION_INCREMENT * timeFactor;
+      this.rotation -= rotationAmount;
+      this.setSpeedRotation(this.rotation);
+    }
+    if (UserInputManager.isKeyDown('d')) {
+      if (lastHold == -1 || direction != 'd') {
+        lastHold = System.currentTimeMillis();
+      }
+      direction = 'd';
+      turned = true;
+
+      float timeFactor = (float) Math.min(Math.pow((System.currentTimeMillis() - lastHold) * 0.001, ROTATION_INCREMENT_POW), MAX_ROTATION_MOD);
+      float rotationAmount = ROTATION_INCREMENT * timeFactor;
+      this.rotation += rotationAmount;
+      this.setSpeedRotation(this.rotation);
+    }
+    if (!turned) {
+      lastHold = -1;
+      direction = 'n';
     }
 
     if (UserInputManager.isKeyDown('w')) {
-      if (shouldAccelerate) this.setSpeed(speed + 0.1f);
-    } else if (UserInputManager.isKeyDown('s')) {
-      if (speed > 0) this.setSpeed(speed - 0.1f);
+      if (shouldAccelerate) this.setSpeed(speed + SPEED_INCREMENT);
+    }
+    if (UserInputManager.isKeyDown('s')) {
+      if (speed > 0 || speed > -MAX_SPEED) this.setSpeed(speed - SPEED_INCREMENT);
     }
   }
 }

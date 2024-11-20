@@ -31,7 +31,5 @@ void keyPressed() {
 }
 
 void keyReleased() {
-  println("Key released: " + key);
-  println(UserInputManager.getHeldKeyAmount());
   UserInputManager.keyUp(key);
 }
