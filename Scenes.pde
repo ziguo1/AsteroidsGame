@@ -1,8 +1,3 @@
-interface Scene {
-  void setup();
-  void draw();
-}
-
 class DefaultScene implements Scene {
   color framebufferColor;
   Shaders shader;
@@ -11,9 +6,9 @@ class DefaultScene implements Scene {
   DefaultScene() {
     this.framebufferColor = color(64);
     this.shader = new Shaders();
-    this.ss = new Spaceship(height / 2, width / 2, 0.02);
+    this.ss = new Spaceship(height / 2, width / 2, 0.02, shader);
 
-    shader.pipeline.add(new MotionBlurShader(framebufferColor, 0.3));
+    shader.addShader(new MotionBlurShader(framebufferColor, 0.3));
   }
 
   void setup() {

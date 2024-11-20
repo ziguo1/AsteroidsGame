@@ -1,37 +1,7 @@
-class Shaders {
-  ArrayList<Shader> pipeline;
-  private ArrayList<Shader> basePipeline;
-
-  public Shaders(ArrayList<Shader> basePipeline) {
-    this.basePipeline = basePipeline;
-    pipeline = new ArrayList(basePipeline);
-  }
-
-  public Shaders() {
-    this.basePipeline = new ArrayList();
-    pipeline = new ArrayList();
-  }
-
-  public void reset() {
-    ArrayList<Shader> arr = new ArrayList();
-    for (Shader shader : basePipeline) arr.add(shader);
-    this.pipeline = arr;
-  }
-
-  public color[] process(color[] fb) {
-    for (Shader s : pipeline) fb = s.processFramebuffer(fb);
-    return fb;
-  }
-}
-
-interface Shader {
-  color[] processFramebuffer(color[] fb);
-}
-
 class MotionBlurShader implements Shader {
-  color bg;
-  float intensity;
-  final float SNAP_TOL = 0.1;
+  protected color bg;
+  protected float intensity;
+  protected final float SNAP_TOL = 0.1;
 
   public MotionBlurShader(color bg, float intensity) {
     this.bg = bg;
@@ -62,5 +32,21 @@ class MotionBlurShader implements Shader {
       }
     }
     return fb;
+  }
+}
+
+class WarpEffectShader extends MotionBlurShader implements Shader {
+  private long start;
+  private long end;
+
+  public WarpEffectShader(color bg, long duration) {
+    super(bg, 1);
+    this.start = System.currentTimeMillis();
+    this.end = this.start + duration;
+  }
+
+  public color[] processFramebuffer(color[] fb) {
+    this.intensity = 1 - (float) (System.currentTimeMillis() - this.start) / (float) (this.end - this.start);
+    return super.processFramebuffer(fb);
   }
 }

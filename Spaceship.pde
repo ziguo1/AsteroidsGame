@@ -1,11 +1,15 @@
 class Spaceship extends Floater
 {
-  public Spaceship(float x, float y) {
+  protected Shaders shaderHook;
+
+  public Spaceship(float x, float y, Shaders sh) {
     super(x, y);
+    this.shaderHook = sh;
   }
 
-  public Spaceship(float x, float y, float kineticFriction) {
+  public Spaceship(float x, float y, float kineticFriction, Shaders sh) {
     super(x, y, kineticFriction);
+    this.shaderHook = sh;
   }
 
   @Override
@@ -37,6 +41,7 @@ class Spaceship extends Floater
   final double ROTATION_INCREMENT_POW = 0.002;
 
   long lastHold = -1;
+  long tillNextWarp = System.currentTimeMillis();
   char direction = 'n';
 
   public void processKeyboardInput() {
@@ -78,6 +83,22 @@ class Spaceship extends Floater
     }
     if (UserInputManager.isKeyDown('s')) {
       if (speed > 0 || speed > -MAX_SPEED) this.setSpeed(speed - SPEED_INCREMENT);
+    }
+
+    if (UserInputManager.isKeyDown('e') && System.currentTimeMillis() > tillNextWarp) {
+      // warp!
+      tillNextWarp = System.currentTimeMillis() + 5000;
+      float rotation = (float) (Math.random() * 360);
+      this.setX((float) (Math.random() * width));
+      this.setY((float) (Math.random() * height));
+      this.setRotation(rotation);
+
+      this.setSpeed(0);
+      this.setSpeedRotation(rotation);
+
+      WarpEffectShader warp = new WarpEffectShader(color(255), 1000);
+      shaderHook.addShader(warp);
+      DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
     }
   }
 }

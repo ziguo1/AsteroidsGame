@@ -1,15 +1,3 @@
-class SceneManager {
-  private Scene activeScene;
-
-  public Scene getScene() {
-    return this.activeScene;
-  }
-  public void setScene(Scene s) {
-    this.activeScene = s;
-    s.setup();
-  }
-}
-
 SceneManager man = new SceneManager();
 
 public void setup()
@@ -22,6 +10,15 @@ public void setup()
 
 public void draw()
 {
+  DeferredTaskRunner.runTasks();
   Scene s = man.getScene();
   s.draw();
+}
+
+void keyPressed() {
+  UserInputManager.keyDown(key);
+}
+
+void keyReleased() {
+  UserInputManager.keyUp(key);
 }
