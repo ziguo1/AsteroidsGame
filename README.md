@@ -6,7 +6,7 @@ Some specific changes have been made to some `.pde` files to make them run in th
 - `Spaceship.pde`
 - `Utils.pde`
 
-Delete the above `.pde` files, and replace them with their `.desktop`-extensioned counterpart to run the game on the desktop.
+Delete the above `.pde` files, and replace them with their `.pde.desktop` counterpart to run the game on the desktop.
 
 # Asteroids (Part 1)
 
