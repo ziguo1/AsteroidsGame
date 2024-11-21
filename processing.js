@@ -10128,6 +10128,7 @@
         if (loaded === sourcesCount) if (errors.length === 0) try {
           return new Processing(canvas, code.join("\n"))
         } catch(e) {
+          console.error(Processing.compile(code.join("\n")).sourceCode);
           throw "Processing.js: Unable to execute pjs sketch: " + e;
         } else throw "Processing.js: Unable to load pjs sketch files: " + errors.join("\n");
       }

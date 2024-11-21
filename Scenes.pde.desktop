@@ -30,11 +30,7 @@ public class BaseBattleScene implements Scene {
     pixels = postShader.process(pixels);
     updatePixels();
 
-    document.title = "Asteroids ::= " +
-      (System.currentTimeMillis() - begin)
-      + "ms/frame; " +
-      (1000.0 / (System.currentTimeMillis() - begin)).toFixed(2)
-      + " fps";
+    getSurface().setTitle(String.format("Asteroids ::= %.2f ms/frame; %.2f fps", (double) (System.currentTimeMillis() - begin), 1000.0 / (System.currentTimeMillis() - begin)));
     begin = System.currentTimeMillis();
   }
 }
@@ -62,6 +58,7 @@ public class DefaultScene extends BaseBattleScene implements Scene {
     ss.processKeyboardInput();
     ss.tick();
 
+    alert(ss.draw);
     ss.draw();
   }
 }
