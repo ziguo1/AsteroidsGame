@@ -1,1 +1,1 @@
-nodemon --ext pde --exec processing-java --sketch=$PWD --run
+nodemon --signal SIGTERM --ext pde --exec processing-java --sketch=$PWD --run
