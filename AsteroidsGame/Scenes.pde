@@ -12,7 +12,7 @@ public class BaseBattleScene implements Scene {
   void setup() {
     background(framebufferColor);
     preShader.addShader(new MotionBlurShader(framebufferColor, 0.7));
-    postShader.addShader(new VingetteShader(0.15));
+    postShader.addShader(new VingetteShader(0.05));
   }
 
   protected void drawBackgroundPrelude() {

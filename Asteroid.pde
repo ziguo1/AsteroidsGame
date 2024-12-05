@@ -43,7 +43,7 @@ public class Asteroid extends Floater {
     translate(x, y);
     rotate(radians(rotation));
     {
-      color s = g.strokeColor;
+      color s = getGraphics().strokeColor;
       noStroke();
       circle(0, 0, radius * 2);
 
@@ -91,8 +91,8 @@ public class AsteroidFragment extends Asteroid {
     translate(x, y);
     rotate(radians(rotation));
     {
-      color s = g.strokeColor;
-      color oc = g.fillColor;
+      color s = getGraphics().strokeColor;
+      color oc = getGraphics().fillColor;
       noStroke();
       fill(lerpColor(startColor, endColor, (float) (System.currentTimeMillis() - startTime) / (removeTime - startTime)));
       circle(0, 0, radius * 2);
@@ -130,7 +130,7 @@ public class Debris extends Floater {
     pushMatrix();
     translate(x, y);
     {
-      color oc = g.fillColor, sc = g.strokeColor;
+      color oc = getGraphics().fillColor, sc = getGraphics().strokeColor;
       noStroke();
       fill(color(64));
       square(0, 0, radius);

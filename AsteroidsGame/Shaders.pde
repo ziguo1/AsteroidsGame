@@ -13,8 +13,10 @@ public class VingetteShader implements Shader {
     for (int i = 0; i < fb.length; i++) {
       float x = i % width;
       float y = i / width;
-      float dist = dist(x, y, width / 2, height / 2) * intensity * 2;
-      float intensity = map(dist, 0, dist(width / 2, height / 2, 0, 0), 0, 1);
+      float baseDistance = (float) Math.sqrt(Math.pow(x - width / 2, 2) + Math.pow(y - height / 2, 2));
+      float maxDistance = (float) Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2));
+      float intensity = map(baseDistance, 0, maxDistance, 0, 1);
+      float adjustedDistance = baseDistance * intensity * 2;
       fb[i] = lerpColor(fb[i], color(0), intensity);
     }
     return fb;

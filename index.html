@@ -14,7 +14,7 @@
 	</header>
 	<section id="content">
 		<canvas id="AsteroidsGame"
-			data-processing-sources="Shim.pde AsteroidsGame.pde Floater.pde Spaceship.pde Star.pde Scenes.pde Shaders.pde Utils.pde">
+			data-processing-sources="Shim.pde AsteroidsGame.pde Asteroid.pde Floater.pde Spaceship.pde Star.pde Scenes.pde Shaders.pde Utils.pde">
 		</canvas>
 	</section>
 	<footer>
@@ -28,7 +28,9 @@
 			}
 		</style>
 		<code>w, a, s, d</code>: Move (<code>a, d</code> rotates the spaceship)<br>
-		<code>e</code>: Hyperspace
+		<code>e</code>: Hyperspace<br>
+		Performs really poorly in the browser (probably due to all the FX). The real Processing can run it at full speed
+		though.
 	</footer>
 </body>
 

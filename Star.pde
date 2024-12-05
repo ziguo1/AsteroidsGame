@@ -20,12 +20,12 @@ public class Star
     this.scene = scene;
 
     {
-      float closestDist = Float.MAX_VALUE;
+      float closestDist = Number.MAX_SAFE_INTEGER;
       while (closestDist < (size * 11)) {
         this.x = (int) (Math.random() * width);
         this.y = (int) (Math.random() * height);
 
-        closestDist = Float.MAX_VALUE;
+        closestDist = Number.MAX_SAFE_INTEGER;
         for (Star s : scene.getStars()) {
           if (s == this || s == null) continue;
           float dist = (float) Math.sqrt(Math.pow(s.x - x, 2) + Math.pow(s.y - y, 2));
@@ -53,8 +53,8 @@ public class Star
     pushMatrix();
     translate(x, y);
     {
-      color oc = g.fillColor;
-      color strokeC = g.strokeColor;
+      color oc = getGraphics().fillColor;
+      color strokeC = getGraphics().strokeColor;
       noStroke();
 
       fill(realColor);

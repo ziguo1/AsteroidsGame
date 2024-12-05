@@ -27,7 +27,7 @@ public class Spaceship extends Floater
     translate(x, y);
     rotate(radians(rotation));
     {
-      color s = g.strokeColor;
+      color s = getGraphics().strokeColor;
       noStroke();
       triangle(
         0, 10,
@@ -115,7 +115,7 @@ public class Spaceship extends Floater
 
       WarpEffectShader warp = new WarpEffectShader(color(32, 64, 256), 1000);
       shaderHook.addShader(warp);
-      DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
+      DeferredTaskRunner.addTask(() => shaderHook.removeShader(warp), 1000);
     }
   }
 }

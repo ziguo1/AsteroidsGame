@@ -12,7 +12,7 @@ public class BaseBattleScene implements Scene {
   void setup() {
     background(framebufferColor);
     preShader.addShader(new MotionBlurShader(framebufferColor, 0.7));
-    postShader.addShader(new VingetteShader(0.15));
+    postShader.addShader(new VingetteShader(0.1));
   }
 
   protected void drawBackgroundPrelude() {
@@ -34,7 +34,7 @@ public class BaseBattleScene implements Scene {
     pixels = postShader.process(pixels);
     updatePixels();
 
-    getSurface().setTitle(String.format("Asteroids ::= %.2f ms/frame; %.2f fps", (double) (System.currentTimeMillis() - begin), 1000.0 / (System.currentTimeMillis() - begin)));
+    getSurface().setTitle("Asteroids ::= " + (1000.0 / (System.currentTimeMillis() - begin)).toFixed(2) + " fps; " + ((double) (System.currentTimeMillis() - begin)).toFixed(2) +  " ms/frame");
     begin = System.currentTimeMillis();
   }
 }
@@ -103,7 +103,7 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
 
     pushMatrix();
     translate(-mouseX / 64, -mouseY / 64);
-    ArrayList<Floater> pendingRemoval = new ArrayList<>();
+    ArrayList<Floater> pendingRemoval = new ArrayList();
     for (Floater f : floaters) {
       if ((f instanceof Debris)) continue;
 

@@ -17,8 +17,8 @@ public class CollisionUtil {
 
   // this took so long you don't even know TwT
   public void performCollisionChecks() {
-    ArrayList<Floater> active = new ArrayList<>();
-    ArrayList<Floater> inMotion = new ArrayList<>();
+    ArrayList<Floater> active = new ArrayList();
+    ArrayList<Floater> inMotion = new ArrayList();
 
     for (Floater floater : floaters) {
       if (floater.getMass() > 0
@@ -105,7 +105,7 @@ public class SceneManager {
 }
 
 public static class UserInputManager {
-  private static ArrayList<Character> heldKeys = new ArrayList<>();
+  private static ArrayList<Character> heldKeys = new ArrayList();
 
   public static void keyDown(char c) {
     if (!heldKeys.contains((Character) c)) heldKeys.add((Character) c);
@@ -133,7 +133,7 @@ public static class UserInputManager {
 }
 
 public static class DeferredTaskRunner {
-  private static HashMap<Runnable, Long> tasks = new HashMap<>();
+  private static HashMap<Runnable, Long> tasks = new HashMap();
 
   public static void addTask(Runnable r, long delay) {
     tasks.put(r, (Long) (System.currentTimeMillis() + delay));
