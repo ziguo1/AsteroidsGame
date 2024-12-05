@@ -1,3 +1,26 @@
+public class VingetteShader implements Shader {
+  protected float intensity;
+
+  public VingetteShader() {
+    this.intensity = 0.5f;
+  }
+
+  public VingetteShader(float intensity) {
+    this.intensity = constrain(intensity, 0, 1);
+  }
+
+  public color[] processFramebuffer(color[] fb) {
+    for (int i = 0; i < fb.length; i++) {
+      float x = i % width;
+      float y = i / width;
+      float dist = dist(x, y, width / 2, height / 2) * intensity * 2;
+      float intensity = map(dist, 0, dist(width / 2, height / 2, 0, 0), 0, 1);
+      fb[i] = lerpColor(fb[i], color(0), intensity);
+    }
+    return fb;
+  }
+}
+
 public class MotionBlurShader implements Shader {
   protected color bg;
   protected float intensity;

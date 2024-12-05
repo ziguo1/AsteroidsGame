@@ -1,8 +1,11 @@
 public class Floater {
   protected float xSpeed, ySpeed;
   protected float rotation; // in degrees
-  protected float kineticFriction;
   protected float x, y;
+
+  protected float kineticFriction;
+  protected float mass;
+  protected float radius;
 
   public Floater(float x, float y) {
     this.x = x;
@@ -10,16 +13,26 @@ public class Floater {
     this.xSpeed = 0;
     this.ySpeed = 0;
     this.rotation = 0;
+    this.radius = 0;
+
     this.kineticFriction = 0;
+    this.mass = 0;
   }
 
-  public Floater(float x, float y, float kineticFriction) {
+  public Floater(float x, float y, float kineticFriction, float mass, float radius) {
     this.x = x;
     this.y = y;
     this.xSpeed = 0;
     this.ySpeed = 0;
     this.rotation = 0;
+
     this.kineticFriction = Math.max(kineticFriction, 0);
+    this.mass = Math.max(mass, 0);
+    this.radius = Math.max(radius, 0);
+  }
+
+  public void onCollision(Floater origin, float force) {
+    // to be implemented
   }
 
   public float getKineticFriction() {
@@ -33,7 +46,7 @@ public class Floater {
     return x;
   }
   public float getY() {
-    return x;
+    return y;
   }
 
   public void setX(float x) {
@@ -47,10 +60,11 @@ public class Floater {
     return rotation;
   }
   public void setRotation(float rot) {
-    this.rotation = rot;
+    this.rotation = rot > 360 ? rot - 360 : rot < 0 ? rot + 360 : rot;
   }
 
   public void setSpeedRotation(float deg) {
+    deg = deg > 360 ? deg - 360 : deg < 0 ? deg + 360 : deg;
     float speed = getSpeed();
     this.xSpeed = speed * (float) Math.cos(radians(deg));
     this.ySpeed = speed * (float) Math.sin(radians(deg));
@@ -67,7 +81,24 @@ public class Floater {
   }
 
   public float getSpeedRotation() {
-    return (float) degrees((float) Math.atan2(ySpeed, xSpeed));
+    float deg = (float) degrees((float) Math.atan2(ySpeed, xSpeed));
+    return deg > 360 ? deg - 360 : deg < 0 ? deg + 360 : deg;
+  }
+
+  public float getMass() {
+    return mass;
+  }
+
+  public void setMass(float mass) {
+    this.mass = mass;
+  }
+
+  public float getRadius() {
+    return radius;
+  }
+
+  public void setRadius(float radius) {
+    this.radius = radius;
   }
 
   public void tick() {

@@ -8,7 +8,7 @@ public class Spaceship extends Floater
   }
 
   public Spaceship(float x, float y, float kineticFriction, Shaders sh) {
-    super(x, y, kineticFriction);
+    super(x, y, kineticFriction, 10, 10);
     this.shaderHook = sh;
   }
 
@@ -27,8 +27,7 @@ public class Spaceship extends Floater
     translate(x, y);
     rotate(radians(rotation));
     {
-      // color s = g.strokeColor;
-      color s = color(255); // i love processing.js
+      color s = g.strokeColor;
       noStroke();
       triangle(
         0, 10,
@@ -71,7 +70,7 @@ public class Spaceship extends Floater
 
       float timeFactor = (float) Math.min(Math.pow((System.currentTimeMillis() - lastHold) * 0.001, ROTATION_INCREMENT_POW), MAX_ROTATION_MOD);
       float rotationAmount = ROTATION_INCREMENT * timeFactor;
-      this.rotation -= rotationAmount;
+      this.setRotation(this.rotation - rotationAmount);
       this.setSpeedRotation(this.rotation);
     }
     if (UserInputManager.isKeyDown('d')) {
@@ -83,7 +82,7 @@ public class Spaceship extends Floater
 
       float timeFactor = (float) Math.min(Math.pow((System.currentTimeMillis() - lastHold) * 0.001, ROTATION_INCREMENT_POW), MAX_ROTATION_MOD);
       float rotationAmount = ROTATION_INCREMENT * timeFactor;
-      this.rotation += rotationAmount;
+      this.setRotation(this.rotation + rotationAmount);
       this.setSpeedRotation(this.rotation);
     }
     if (!turned) {
@@ -92,8 +91,14 @@ public class Spaceship extends Floater
     }
 
     if (UserInputManager.isKeyDown('w')) {
-      if (shouldAccelerate) this.setSpeed(speed + SPEED_INCREMENT);
+      if (shouldAccelerate) {
+        float speedRot = this.getSpeedRotation(), realRot = getRotation();
+        if (Math.abs(realRot - speedRot) <= 0.0001 || Math.abs(speed) <= 0.07) this.setSpeedRotation(realRot);
+        else this.setSpeedRotation(speedRot + (float) (Math.abs(realRot - speedRot) * (realRot > speedRot ? 1 : -1)));
+        this.setSpeed(speed + SPEED_INCREMENT);
+      }
     }
+
     if (UserInputManager.isKeyDown('s')) {
       if (speed > 0 || speed > -MAX_SPEED) this.setSpeed(speed + SLOW_DECREMENT);
     }
@@ -110,7 +115,7 @@ public class Spaceship extends Floater
 
       WarpEffectShader warp = new WarpEffectShader(color(32, 64, 256), 1000);
       shaderHook.addShader(warp);
-      DeferredTaskRunner.addTask(() => shaderHook.removeShader(warp), 1000);
+      DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
     }
   }
 }
