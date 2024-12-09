@@ -8,7 +8,11 @@ public class Asteroid extends Floater {
     direction = (float) Math.random() * (Math.random() > 0.5 ? 1 : -1);
     this.kineticFriction = 0.0001f;
     this.bf = bf;
-    this.shapePoints = generateRandomConvexPolygon(10);
+    this.shapePoints = generateRandomConvexPolygon(7);
+    for (Point2D p : shapePoints) {
+      p.setX(Math.min(p.getX() * radius, radius * 0.9));
+      p.setY(Math.min(p.getY() * radius, radius * 0.9));
+    }
   }
 
   public Asteroid(float x, float y, float kineticFriction, Battlefield bf) {
@@ -16,7 +20,7 @@ public class Asteroid extends Floater {
     direction = (float) Math.random() * (Math.random() > 0.5 ? 1 : -1);
     this.kineticFriction = 0.0001f;
     this.bf = bf;
-    this.shapePoints = generateRandomConvexPolygon(10);
+    this.shapePoints = generateRandomConvexPolygon(7);
     for (Point2D p : shapePoints) {
       p.setX(Math.min(p.getX() * radius, radius * 0.9));
       p.setY(Math.min(p.getY() * radius, radius * 0.9));
