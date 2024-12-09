@@ -1,12 +1,6 @@
 # RUNNING ON THE DESKTOP
 
-Some specific changes have been made to some `.pde` files to make them run in the browser under processing.js (shown below):
-
-- `Scenes.pde`
-- `Spaceship.pde`
-- `Utils.pde`
-
-Delete the above `.pde` files, and replace them with their `.pde.desktop` counterpart to run the game on the desktop.
+The desktop-compatible project is available under the `AsteroidsGame` directory under this repository.
 
 # Asteroids (Part 2)
 
@@ -32,7 +26,7 @@ Suggested steps to writing an Asteroid class
    - a `move()` method that also `turn`s (rotates) each Asteroid at its own speed
    - "getter" (accessor) functions for `myCenterX` and `myCenterY`
 3. On line 14 of `index.html` add `Asteroid.pde` to the list of files in `data-processing-sources`. The canvas tag should now look like `<canvas id="AsteroidsGame" data-processing-sources="Asteroid.pde AsteroidsGame.pde Floater.pde Spaceship.pde Star.pde">
-			</canvas>`. Now choose _File | Save_.
+		</canvas>`. Now choose _File | Save_.
 4. Now add just a single asteroid to your program. Start by just calling the Asteroid's `show()` function. Make sure you can see it and are happy with its shape before going to the next step.
 5. Now add the code that moves and rotates the Asteroid. The best way to do this is to _override_ the inherited `move()` function so that asteroids rotate as they move.
 

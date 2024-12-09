@@ -49,6 +49,13 @@ public class Floater {
     return y;
   }
 
+  public float getEffectivePhysicsX() {
+    return x;
+  }
+  public float getEffectivePhysicsY() {
+    return y;
+  }
+
   public void setX(float x) {
     this.x = x;
   }

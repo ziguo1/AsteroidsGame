@@ -26,8 +26,10 @@ public class Spaceship extends Floater
     pushMatrix();
     translate(x, y);
     rotate(radians(rotation));
+    PVector transformed = transformPoint(5, 0);
+    createLightingBackdrop((int) (Math.round(transformed.x)), (int) (Math.round(transformed.y)), (int) radius * 2, color(68, 122, 156), 0.2);
     {
-      color s = getGraphics().strokeColor;
+      color s = g.strokeColor;
       noStroke();
       triangle(
         0, 10,

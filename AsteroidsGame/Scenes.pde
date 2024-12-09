@@ -12,7 +12,7 @@ public class BaseBattleScene implements Scene {
   void setup() {
     background(framebufferColor);
     preShader.addShader(new MotionBlurShader(framebufferColor, 0.7));
-    postShader.addShader(new VingetteShader(0.05));
+    postShader.addShader(new VingetteShader(0.7));
   }
 
   protected void drawBackgroundPrelude() {
@@ -45,11 +45,11 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
   private Spaceship ss;
   private Star[] stars;
 
-  static final int ASTEROID_COUNT = 100;
+  static final int ASTEROID_COUNT = 10;
 
   public DefaultScene() {
     super();
-    this.ss = new Spaceship(height / 2, width / 2, 0.02, postShader);
+    this.ss = new Spaceship(height / 2, width / 2, 0.02, postShader, this);
     this.stars = new Star[200];
     this.floaters = new ArrayList<Floater>();
     this.collisions = new CollisionUtil(floaters);
@@ -60,9 +60,7 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
       stars[i] = new Star((int) (Math.random() * (width + 50)) - 50, (int) (Math.random() * (height + 50)) - 50, this);
     }
 
-    for (int i = 0; i < ASTEROID_COUNT; i++) {
-      floaters.add(new Asteroid((int) random(width), (int) random(height), 0.02, this));
-    }
+    fillEmpty();
   }
 
   protected void fillEmpty() {
@@ -72,6 +70,8 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
     }
     for (int i = 0; i < ASTEROID_COUNT - cnt; i++) {
       Asteroid a = new Asteroid((int) random(width), (int) random(height), 0.02, this);
+      // a.setSpeed((float) (Math.random() * 5) + 5);
+      // a.setSpeedRotation((float) (Math.random() * 360));
       floaters.add(a);
     }
   }
@@ -94,22 +94,23 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
       star.tick();
       star.draw();
     }
+    ArrayList<Floater> pendingRemoval = new ArrayList<>();
     for (Floater f : floaters) {
       if (!(f instanceof Debris)) continue;
       f.tick();
       f.draw();
+      if (f.getRadius() == 0 || f.getX() > width + 50 || f.getX() < -50 || f.getY() > height + 50 || f.getX() < -50) pendingRemoval.add(f);
     }
     popMatrix();
 
     pushMatrix();
     translate(-mouseX / 64, -mouseY / 64);
-    ArrayList<Floater> pendingRemoval = new ArrayList<>();
     for (Floater f : floaters) {
       if ((f instanceof Debris)) continue;
 
       f.tick();
       f.draw();
-      if (f.getRadius() == 0) pendingRemoval.add(f);
+      if (f.getRadius() == 0 || f.getX() > width + 10 || f.getX() < -10 || f.getY() > height + 10 || f.getX() < -10) pendingRemoval.add(f);
     }
     for (Floater f : pendingRemoval) floaters.remove(f);
 

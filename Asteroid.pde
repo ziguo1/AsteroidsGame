@@ -5,12 +5,14 @@ public class Asteroid extends Floater {
   public Asteroid(float x, float y, Battlefield bf) {
     super(x, y);
     direction = Math.random() > 0.5 ? 1 : -1;
+    this.kineticFriction = 0.0001f;
     this.bf = bf;
   }
 
   public Asteroid(float x, float y, float kineticFriction, Battlefield bf) {
     super(x, y, kineticFriction, 5, 5);
     direction = Math.random() > 0.5 ? 1 : -1;
+    this.kineticFriction = 0.0001f;
     this.bf = bf;
   }
 
@@ -43,7 +45,7 @@ public class Asteroid extends Floater {
     translate(x, y);
     rotate(radians(rotation));
     {
-      color s = getGraphics().strokeColor;
+      color s = g.strokeColor;
       noStroke();
       circle(0, 0, radius * 2);
 
@@ -90,15 +92,8 @@ public class AsteroidFragment extends Asteroid {
     pushMatrix();
     translate(x, y);
     rotate(radians(rotation));
-    {
-      color s = getGraphics().strokeColor;
-      color oc = getGraphics().fillColor;
-      noStroke();
-      fill(lerpColor(startColor, endColor, (float) (System.currentTimeMillis() - startTime) / (removeTime - startTime)));
-      circle(0, 0, radius * 2);
-      fill(oc);
-      stroke(s);
-    }
+    PVector transformed = transformPoint(0, 0);
+    createLightingBackdrop((int) (Math.round(transformed.x)), (int) (Math.round(transformed.y)), (int) radius * 10, lerpColor(startColor, endColor, (float) (System.currentTimeMillis() - startTime) / (removeTime - startTime)));
     popMatrix();
   }
 }
@@ -113,9 +108,9 @@ public class Debris extends Floater {
     removeTime = startTime + (long) (Math.random() * 3000) + 2000;
     kineticFriction = 0.001f;
     this.scene = scene;
-    this.radius = 3;
+    this.radius = 5;
 
-    this.setSpeed((float) (Math.random() * 10) + 10);
+    this.setSpeed((float) (Math.random() * 3) + 2);
     this.setSpeedRotation(155 + (float)(Math.random() * 30));
   }
 
@@ -130,7 +125,7 @@ public class Debris extends Floater {
     pushMatrix();
     translate(x, y);
     {
-      color oc = getGraphics().fillColor, sc = getGraphics().strokeColor;
+      color oc = g.fillColor, sc = g.strokeColor;
       noStroke();
       fill(color(64));
       square(0, 0, radius);

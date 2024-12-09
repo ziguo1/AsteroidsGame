@@ -1,15 +1,18 @@
 public class Spaceship extends Floater
 {
   protected Shaders shaderHook;
+  protected Battlefield bf;
 
-  public Spaceship(float x, float y, Shaders sh) {
+  public Spaceship(float x, float y, Shaders sh, Battlefield bf) {
     super(x, y);
     this.shaderHook = sh;
+    this.bf = bf;
   }
 
-  public Spaceship(float x, float y, float kineticFriction, Shaders sh) {
+  public Spaceship(float x, float y, float kineticFriction, Shaders sh, Battlefield bf) {
     super(x, y, kineticFriction, 10, 10);
     this.shaderHook = sh;
+    this.bf = bf;
   }
 
   public void tick() {
@@ -26,6 +29,8 @@ public class Spaceship extends Floater
     pushMatrix();
     translate(x, y);
     rotate(radians(rotation));
+    PVector transformed = transformPoint(5, 0);
+    createLightingBackdrop((int) (Math.round(transformed.x)), (int) (Math.round(transformed.y)), (int) radius * 2, color(68, 122, 156), 0.2);
     {
       color s = g.strokeColor;
       noStroke();
@@ -54,6 +59,7 @@ public class Spaceship extends Floater
 
   protected long lastHold = -1;
   protected long tillNextWarp = System.currentTimeMillis();
+  protected long tillNextBulletShoot = System.currentTimeMillis();
   protected char direction = 'n';
 
   public void processKeyboardInput() {
@@ -117,5 +123,40 @@ public class Spaceship extends Floater
       shaderHook.addShader(warp);
       DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
     }
+
+    if (UserInputManager.isKeyDown(' ') && System.currentTimeMillis() > tillNextBulletShoot) {
+      tillNextBulletShoot = System.currentTimeMillis() + 100;
+      float spawnX = this.x + (float) Math.cos(radians(this.rotation)) * this.radius * 2;
+      float spawnY = this.y + (float) Math.sin(radians(this.rotation)) * this.radius * 2;
+      Projectile p = new Projectile(spawnX, spawnY, this.getSpeed() + 10, this.getRotation());
+      bf.getFloaters().add(p);
+    }
+  }
+}
+
+public class Projectile extends Floater {
+  color thisColor;
+
+  public Projectile(float x, float y, float speed, float rotation) {
+    super(x, y, 0.02, 0.5, 4);
+    this.setSpeed(speed);
+    this.setSpeedRotation(rotation);
+    this.kineticFriction = 0.0001f;
+    thisColor = lerpColor(color(255, 124, 10), color(255, 67, 10), (float) Math.random());
+  }
+
+  public void onCollision(Floater origin, float force) {
+    if (origin instanceof Asteroid) {
+      Asteroid a = (Asteroid) origin;
+      this.radius = 0;
+    }
+  }
+
+  public void draw() {
+    pushMatrix();
+    translate(x, y);
+    rotate(radians(rotation));
+    createLightingBackdrop((int) this.x, (int) this.y, (int) this.radius, thisColor, 0.5);
+    popMatrix();
   }
 }

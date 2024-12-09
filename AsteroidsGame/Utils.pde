@@ -21,11 +21,10 @@ public class CollisionUtil {
     ArrayList<Floater> inMotion = new ArrayList<>();
 
     for (Floater floater : floaters) {
-      if (floater.getMass() > 0
-        && (floater.x > -10 && floater.x <= width + 10)
+      if ((floater.x > -10 && floater.x <= width + 10)
         && (floater.y > -10 && floater.y <= height + 10)) {
         active.add(floater);
-        if (floater.getSpeed() > 0) inMotion.add(floater);
+        inMotion.add(floater);
       }
     }
 
@@ -35,8 +34,8 @@ public class CollisionUtil {
         Floater floater2 = active.get(j);
         if (floater1 == floater2) continue;
 
-        float dx = floater1.getX() - floater2.getX();
-        float dy = floater1.getY() - floater2.getY();
+        float dx = floater1.getEffectivePhysicsX() - floater2.getEffectivePhysicsX();
+        float dy = floater1.getEffectivePhysicsY() - floater2.getEffectivePhysicsY();
         float minDist = floater1.getRadius() + floater2.getRadius();
 
         float actualDist = sqrt((dx * dx) + (dy * dy));
@@ -206,4 +205,126 @@ public class Shaders {
 
 public interface Shader {
   color[] processFramebuffer(color[] fb);
+}
+
+// 2lazy2code
+// thanks https://cglab.ca/~sander/misc/ConvexGeneration/ValtrAlgorithm.java
+
+public static class Point2D {
+  protected float x, y;
+
+  public Point2D(float x, float y) {
+    this.x = x;
+    this.y = y;
+  }
+
+
+  public Point2D(double x, double y) {
+    this.x = (float) x;
+    this.y = (float) y;
+  }
+
+  public float getX() {
+    return x;
+  }
+
+  public float getY() {
+    return y;
+  }
+
+  public void setX(float x) {
+    this.x = x;
+  }
+
+  public void setY(float y) {
+    this.y = y;
+  }
+}
+
+public static List<Point2D> generateRandomConvexPolygon(int n) {
+  Random RAND = new Random();
+  List<Double> xPool = new ArrayList<>(n);
+  List<Double> yPool = new ArrayList<>(n);
+
+  for (int i = 0; i < n; i++) {
+    xPool.add(RAND.nextDouble());
+    yPool.add(RAND.nextDouble());
+  }
+
+  Collections.sort(xPool);
+  Collections.sort(yPool);
+
+  Double minX = xPool.get(0);
+  Double maxX = xPool.get(n - 1);
+  Double minY = yPool.get(0);
+  Double maxY = yPool.get(n - 1);
+
+  List<Double> xVec = new ArrayList<>(n);
+  List<Double> yVec = new ArrayList<>(n);
+
+  double lastTop = minX, lastBot = minX;
+
+  for (int i = 1; i < n - 1; i++) {
+    double x = xPool.get(i);
+
+    if (RAND.nextBoolean()) {
+      xVec.add(x - lastTop);
+      lastTop = x;
+    } else {
+      xVec.add(lastBot - x);
+      lastBot = x;
+    }
+  }
+
+  xVec.add(maxX - lastTop);
+  xVec.add(lastBot - maxX);
+
+  double lastLeft = minY, lastRight = minY;
+
+  for (int i = 1; i < n - 1; i++) {
+    double y = yPool.get(i);
+
+    if (RAND.nextBoolean()) {
+      yVec.add(y - lastLeft);
+      lastLeft = y;
+    } else {
+      yVec.add(lastRight - y);
+      lastRight = y;
+    }
+  }
+
+  yVec.add(maxY - lastLeft);
+  yVec.add(lastRight - maxY);
+  Collections.shuffle(yVec);
+
+  List<Point2D> vec = new ArrayList<>(n);
+  for (int i = 0; i < n; i++) {
+    vec.add(new Point2D(xVec.get(i), yVec.get(i)));
+  }
+
+  Collections.sort(vec, Comparator.comparingDouble(v -> Math.atan2(v.getY(), v.getX())));
+  double x = 0, y = 0;
+  double minPolygonX = 0;
+  double minPolygonY = 0;
+  List<Point2D> points = new ArrayList<>(n);
+
+  for (int i = 0; i < n; i++) {
+    points.add(new Point2D(x, y));
+
+    x += vec.get(i).getX();
+    y += vec.get(i).getY();
+
+    minPolygonX = Math.min(minPolygonX, x);
+    minPolygonY = Math.min(minPolygonY, y);
+  }
+
+  double xShift = minX - minPolygonX;
+  double yShift = minY - minPolygonY;
+
+  for (int i = 0; i < n; i++) {
+    Point2D p = points.get(i);
+    points.set(i, new Point2D(p.x + xShift, p.y + yShift));
+  }
+
+  return points;
 }

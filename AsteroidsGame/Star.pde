@@ -18,23 +18,6 @@ public class Star
     this.y = y;
     this.size = (float) (Math.random() * (MAX_SIZE - MIN_SIZE)) + MIN_SIZE;
     this.scene = scene;
-
-    {
-      float closestDist = Float.MAX_VALUE;
-      while (closestDist < (size * 11)) {
-        this.x = (int) (Math.random() * width);
-        this.y = (int) (Math.random() * height);
-
-        closestDist = Float.MAX_VALUE;
-        for (Star s : scene.getStars()) {
-          if (s == this || s == null) continue;
-          float dist = (float) Math.sqrt(Math.pow(s.x - x, 2) + Math.pow(s.y - y, 2));
-          if (dist < closestDist) {
-            closestDist = dist;
-          }
-        }
-      }
-    }
     this.naturalTransparency = (float) (Math.random() * 0.15F);
     this.refColor = lerpColor(color(146, 197, 213), color(210, 147, 134), (float) Math.random());
   }
@@ -52,6 +35,9 @@ public class Star
   public void draw() {
     pushMatrix();
     translate(x, y);
+    final int glimmer = 10;
+    PVector transformed = transformPoint(0, 0);
+    createLightingBackdrop((int) (Math.round(transformed.x) + (size / 2)), (int) (Math.round(transformed.y) + (size / 2)), (int) (glimmer * 0.75), realColor);
     {
       color oc = g.fillColor;
       color strokeC = g.strokeColor;
@@ -60,7 +46,6 @@ public class Star
       fill(realColor);
       square(0, 0, size);
 
-      final int glimmer = 10;
       for (int i = 0; i < glimmer; i++) {
         fill(lerpColor(realColor, scene.framebufferColor, ((float) i / glimmer)));
 
@@ -68,13 +53,6 @@ public class Star
         square(size * -(i / 2), 0, size);
         square(0, size * -(i / 2), size);
         square(0, size * (i / 2), size);
-
-        if (i == 1) {
-          square(size / 2F, size / 2F, size);
-          square(-size / 2F, size / 2F, size);
-          square(size / 2F, -size / 2F, size);
-          square(-size / 2F, -size / 2F, size);
-        }
       }
 
       stroke(strokeC);
