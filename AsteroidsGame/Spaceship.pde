@@ -15,6 +15,12 @@ public class Spaceship extends Floater
     this.bf = bf;
   }
 
+  public void onCollision(Floater origin, float force) {
+    if (force > this.mass * 1.2 && !dead && origin instanceof Asteroid && !(origin instanceof AsteroidFragment)) {
+      this.kill();
+    }
+  }
+
   public void tick() {
     super.tick();
 
@@ -26,6 +32,7 @@ public class Spaceship extends Floater
   }
 
   public void draw() {
+    if (System.currentTimeMillis() < deadTill) return;
     pushMatrix();
     translate(x, y);
     rotate(radians(rotation));
@@ -49,6 +56,25 @@ public class Spaceship extends Floater
     popMatrix();
   }
 
+  public void kill() {
+    int fragments = (int) (Math.random() * 10) + 5;
+    for (int i = 0; i < fragments; i++) {
+      Asteroid a = new AsteroidFragment(this.x, this.y, this.kineticFriction, this.bf);
+      a.setSpeed(Math.max(this.getSpeed() * 2f, 6));
+      a.setSpeedRotation((float) (Math.random() * 360));
+      a.setRadius(Math.min(this.radius / 2, 2));
+      a.setMass(this.getMass() / fragments);
+      bf.getFloaters().add(a);
+    }
+    this.setSpeed(0);
+    deadTill = System.currentTimeMillis() + 5000;
+    dead = true;
+
+    WarpEffectShader warp = new WarpEffectShader(color(255, 0, 0), 1000, 0.8);
+    shaderHook.addShader(warp);
+    DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
+  }
+
   protected final int MAX_SPEED = 10;
   protected final float SPEED_INCREMENT = 0.1f;
   protected final float SLOW_DECREMENT = -0.05f;
@@ -62,7 +88,23 @@ public class Spaceship extends Floater
   protected long tillNextBulletShoot = System.currentTimeMillis();
   protected char direction = 'n';
 
+  protected long deadTill = -1;
+  protected boolean dead = false;
+
   public void processKeyboardInput() {
+    if (System.currentTimeMillis() < deadTill) return;
+    if (dead) {
+      dead = false;
+      float rotation = (float) (Math.random() * 360);
+      this.setX((float) (Math.random() * width));
+      this.setY((float) (Math.random() * height));
+      this.setRotation(rotation);
+
+      this.setSpeed(0);
+      this.setSpeedRotation(rotation);
+      this.mass = 10;
+    }
+
     float speed = this.getSpeed();
     boolean shouldAccelerate = Math.abs(speed) < MAX_SPEED;
 
@@ -156,7 +198,7 @@ public class Projectile extends Floater {
     pushMatrix();
     translate(x, y);
     rotate(radians(rotation));
-    createLightingBackdrop((int) this.x, (int) this.y, (int) this.radius, thisColor, 0.5);
+    createLightingBackdrop((int) this.x, (int) this.y, (int) this.radius, thisColor, 0.8);
     popMatrix();
   }
 }

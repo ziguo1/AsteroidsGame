@@ -76,15 +76,25 @@ public class VibranceShader implements Shader {
 public class WarpEffectShader extends MotionBlurShader implements Shader {
   private long start;
   private long end;
+  private double startIntensity;
+
+  public WarpEffectShader(color bg, long duration, double startIntensity) {
+    super(bg, 1);
+    this.start = System.currentTimeMillis();
+    this.end = this.start + duration;
+    this.startIntensity = startIntensity;
+  }
+
 
   public WarpEffectShader(color bg, long duration) {
     super(bg, 1);
     this.start = System.currentTimeMillis();
     this.end = this.start + duration;
+    this.startIntensity = 0;
   }
 
   public color[] processFramebuffer(color[] fb) {
-    this.intensity = 1 - Math.min((float) (System.currentTimeMillis() - this.start) / (float) (this.end - this.start), 1);
+    this.intensity = 1 - (float) startIntensity -  (float) ((1 - startIntensity) * Math.min((float) (System.currentTimeMillis() - this.start) / (float) (this.end - this.start), 1));
     return super.processFramebuffer(fb);
   }
 }
@@ -93,7 +103,6 @@ public void createLightingBackdrop(int sX, int sY, int radius, color light) {
   loadPixels();
   for (int x = 0; x < radius * 2; x++) {
     for (int y = 0; y < radius * 2; y++) {
-      // check for clip
       int screenX = sX + x - radius, screenY = sY + y - radius;
       if (screenX < 0 || screenX >= width || screenY < 0 || screenY >= height) {
         continue;
