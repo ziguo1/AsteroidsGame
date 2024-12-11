@@ -70,9 +70,14 @@ public class Spaceship extends Floater
     deadTill = System.currentTimeMillis() + 5000;
     dead = true;
 
-    WarpEffectShader warp = new WarpEffectShader(color(255, 0, 0), 1000, 0.8);
+    final WarpEffectShader warp = new WarpEffectShader(color(255, 0, 0), 1000, 0.8);
     shaderHook.addShader(warp);
-    DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
+    DeferredTaskRunner.addTask(new Runnable() {
+      @Override
+      public void run() {
+        shaderHook.removeShader(warp);
+      }
+    }, 1000);
   }
 
   protected final int MAX_SPEED = 10;
@@ -161,9 +166,14 @@ public class Spaceship extends Floater
       this.setSpeed(0);
       this.setSpeedRotation(rotation);
 
-      WarpEffectShader warp = new WarpEffectShader(color(32, 64, 256), 1000);
+      final WarpEffectShader warp = new WarpEffectShader(color(32, 64, 256), 1000);
       shaderHook.addShader(warp);
-      DeferredTaskRunner.addTask(() -> shaderHook.removeShader(warp), 1000);
+      DeferredTaskRunner.addTask(new Runnable() {
+        @Override
+        public void run() {
+          shaderHook.removeShader(warp);
+        }
+      }, 1000);
     }
 
     if (UserInputManager.isKeyDown(' ') && System.currentTimeMillis() > tillNextBulletShoot) {

@@ -17,8 +17,8 @@ public class CollisionUtil {
 
   // this took so long you don't even know TwT
   public void performCollisionChecks() {
-    ArrayList<Floater> active = new ArrayList<>();
-    ArrayList<Floater> inMotion = new ArrayList<>();
+    ArrayList<Floater> active = new ArrayList<Floater>();
+    ArrayList<Floater> inMotion = new ArrayList<Floater>();
 
     for (Floater floater : floaters) {
       if ((floater.x > -10 && floater.x <= width + 10)
@@ -104,7 +104,7 @@ public class SceneManager {
 }
 
 public static class UserInputManager {
-  private static ArrayList<Character> heldKeys = new ArrayList<>();
+  private static ArrayList<Character> heldKeys = new ArrayList<Character>();
 
   public static void keyDown(char c) {
     if (!heldKeys.contains((Character) c)) heldKeys.add((Character) c);
@@ -132,7 +132,7 @@ public static class UserInputManager {
 }
 
 public static class DeferredTaskRunner {
-  private static HashMap<Runnable, Long> tasks = new HashMap<>();
+  private static HashMap<Runnable, Long> tasks = new HashMap<Runnable, Long>();
 
   public static void addTask(Runnable r, long delay) {
     tasks.put(r, (Long) (System.currentTimeMillis() + delay));
@@ -243,8 +243,8 @@ public static class Point2D {
 
 public static List<Point2D> generateRandomConvexPolygon(int n) {
   Random RAND = new Random();
-  List<Double> xPool = new ArrayList<>(n);
-  List<Double> yPool = new ArrayList<>(n);
+  List<Double> xPool = new ArrayList<Double>(n);
+  List<Double> yPool = new ArrayList<Double>(n);
 
   for (int i = 0; i < n; i++) {
     xPool.add(RAND.nextDouble());
@@ -259,8 +259,8 @@ public static List<Point2D> generateRandomConvexPolygon(int n) {
   Double minY = yPool.get(0);
   Double maxY = yPool.get(n - 1);
 
-  List<Double> xVec = new ArrayList<>(n);
-  List<Double> yVec = new ArrayList<>(n);
+  List<Double> xVec = new ArrayList<Double>(n);
+  List<Double> yVec = new ArrayList<Double>(n);
 
   double lastTop = minX, lastBot = minX;
 
@@ -297,16 +297,22 @@ public static List<Point2D> generateRandomConvexPolygon(int n) {
   yVec.add(lastRight - maxY);
   Collections.shuffle(yVec);
 
-  List<Point2D> vec = new ArrayList<>(n);
+  List<Point2D> vec = new ArrayList<Point2D>(n);
   for (int i = 0; i < n; i++) {
     vec.add(new Point2D(xVec.get(i), yVec.get(i)));
   }
-
-  Collections.sort(vec, Comparator.comparingDouble(v -> Math.atan2(v.getY(), v.getX())));
+  Collections.sort(vec, new Comparator<Point2D>() {
+      @Override
+      public int compare(Point2D v1, Point2D v2) {
+          double angle1 = Math.atan2(v1.getY(), v1.getX());
+          double angle2 = Math.atan2(v2.getY(), v2.getX());
+          return Double.compare(angle1, angle2);
+      }
+  });
   double x = 0, y = 0;
   double minPolygonX = 0;
   double minPolygonY = 0;
-  List<Point2D> points = new ArrayList<>(n);
+  List<Point2D> points = new ArrayList<Point2D>(n);
 
   for (int i = 0; i < n; i++) {
     points.add(new Point2D(x, y));

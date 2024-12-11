@@ -148,3 +148,18 @@ PVector transformPoint(float x, float y) {
   m.mult(new PVector(x, y), transformed);
   return transformed;
 }
+
+// stupd processing 3
+public static class ShaderRemover {
+  protected Shader shader;
+  protected Shaders hook;
+
+  public ShaderRemover(Shader shader, Shaders hook) {
+    this.shader = shader;
+    this.hook = hook;
+  }
+
+  public void remove() {
+    hook.removeShader(shader);
+  }
+}

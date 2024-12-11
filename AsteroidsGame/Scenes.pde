@@ -94,7 +94,7 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
       star.tick();
       star.draw();
     }
-    ArrayList<Floater> pendingRemoval = new ArrayList<>();
+    ArrayList<Floater> pendingRemoval = new ArrayList<Floater>();
     for (Floater f : floaters) {
       if (!(f instanceof Debris)) continue;
       f.tick();
