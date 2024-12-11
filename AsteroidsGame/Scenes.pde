@@ -45,7 +45,7 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
   private Spaceship ss;
   private Star[] stars;
 
-  static final int ASTEROID_COUNT = 10;
+  static final int ASTEROID_COUNT = 20;
 
   public DefaultScene() {
     super();
@@ -110,7 +110,7 @@ public class DefaultScene extends BaseBattleScene implements Scene, Battlefield 
 
       f.tick();
       f.draw();
-      if (f.getRadius() == 0 || f.getX() > width + 10 || f.getX() < -10 || f.getY() > height + 10 || f.getX() < -10) pendingRemoval.add(f);
+      if (f.getRadius() == 0 || f.getX() > width + 5 || f.getX() < -5 || f.getY() > height + 5 || f.getX() < -5) pendingRemoval.add(f);
     }
     for (Floater f : pendingRemoval) floaters.remove(f);
 
