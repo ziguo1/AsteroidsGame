@@ -45,7 +45,8 @@ if [ ! -e ~/.setup ]; then
     sudo apt upgrade -y
 
     echo "Installing desktop environment and Processing, please wait..."
-    sudo bash -c "DEBIAN_FRONTEND=noninteractive apt install xfce4 firefox xdg-utils -y -o Dpkg::Options::="--force-confnew" -o Dpkg::Options::="--force-confdef" </dev/null"
+    sudo bash -c "DEBIAN_FRONTEND=noninteractive apt install xfce4 xdg-utils -y -o Dpkg::Options::="--force-confnew" -o Dpkg::Options::="--force-confdef" </dev/null"
+    sudo apt install firefox -y
 
     if [ -d "/tmp/processing" ]; then
         rm -rf /tmp/processing
@@ -102,9 +103,10 @@ StartupNotify=false" > $HOME/Desktop/Save\ Your\ Code.desktop
     touch $HOME/.vnc/.de-was-selected
     echo "" > ~/.vnc/xstartup
     sed -i '1i#!/bin/sh' ~/.vnc/xstartup
-    echo -e "set -x\nxdg-settings set default-web-browser firefox.desktop\nexec xfce4-session" >> ~/.vnc/xstartup  
+    echo -e "set -x\nxdg-settings set default-web-browser firefox.desktop\n(sleep 2 && xdg-settings set default-web-browser firefox.desktop) &\nexec xfce4-session" >> ~/.vnc/xstartup  
     chmod +x ~/.vnc/xstartup
 
+    cd $SCRIPT_DIR
     sg ssl-cert -c "vncserver :0 > /dev/null"
 
     echo "================"
@@ -135,6 +137,8 @@ else
     echo "If something isn't working quite right, run 'rm -f ~/.setup', and try again to retry your VNC installation."
 fi
 trap - SIGINT
+
+
 
 
 
