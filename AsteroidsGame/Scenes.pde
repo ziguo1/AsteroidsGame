@@ -1,3 +1,5 @@
+// testing comment
+
 public class BaseBattleScene implements Scene {
   protected color framebufferColor;
   protected Shaders postShader;
