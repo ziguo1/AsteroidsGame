@@ -99,28 +99,29 @@ public class WarpEffectShader extends MotionBlurShader implements Shader {
   }
 }
 
-public void createLightingBackdrop(int sX, int sY, int radius, color light) {
-  loadPixels();
-  for (int x = 0; x < radius * 2; x++) {
-    for (int y = 0; y < radius * 2; y++) {
-      int screenX = sX + x - radius, screenY = sY + y - radius;
-      if (screenX < 0 || screenX >= width || screenY < 0 || screenY >= height) {
-        continue;
-      }
+Map<Integer, float[][]> backdropCache = new HashMap();
 
-      int index = (screenY * width) + screenX;
-      float distance = dist(sX, sY, screenX, screenY);
-      float normalizedDist = distance / radius;
-      if (normalizedDist > 1.0) continue;
-      float intensity = 1.0 - (normalizedDist * normalizedDist);
-      intensity = constrain(intensity, 0, 1);
-      pixels[index] = lerpColor(pixels[index], light, intensity * 0.35);
-    }
-  }
-  updatePixels();
+public void createLightingBackdrop(int sX, int sY, int radius, color light) {
+  createLightingBackdrop(sX, sY, radius, light, 0.35);
 }
 
 public void createLightingBackdrop(int sX, int sY, int radius, color light, float intensityMulti) {
+  float[][] backdrop = backdropCache.get(radius);
+  if (backdrop == null) {
+    backdrop = new float[radius * 2][radius * 2];
+    int cX = radius - 1, cY = radius - 1;
+    for (int x = 0; x < radius * 2; x++) {
+      for (int y = 0; y < radius * 2; y++) {
+        float distance = dist(cX, cY, x, y);
+        float normalized = distance / radius;
+        if (normalized > 1.0) continue;
+        float intensity = 1.0 - (normalized * normalized);
+        backdrop[x][y] = constrain(intensity, 0, 1);
+      }
+    }
+    backdropCache.put(radius, backdrop);
+  }
+  
   loadPixels();
   for (int x = 0; x < radius * 2; x++) {
     for (int y = 0; y < radius * 2; y++) {
@@ -129,13 +130,8 @@ public void createLightingBackdrop(int sX, int sY, int radius, color light, floa
       if (screenX < 0 || screenX >= width || screenY < 0 || screenY >= height) {
         continue;
       }
-
       int index = (screenY * width) + screenX;
-      float distance = dist(sX, sY, screenX, screenY);
-      float normalizedDist = distance / radius;
-      if (normalizedDist > 1.0) continue;
-      float intensity = 1.0 - (normalizedDist * normalizedDist);
-      intensity = constrain(intensity, 0, 1);
+      float intensity = backdrop[x][y];
       pixels[index] = lerpColor(pixels[index], light, intensity * intensityMulti);
     }
   }
@@ -149,7 +145,6 @@ PVector transformPoint(float x, float y) {
   return transformed;
 }
 
-// stupd processing 3
 public static class ShaderRemover {
   protected Shader shader;
   protected Shaders hook;
